@@ -1,5 +1,8 @@
-// ===== CONFIG: paste your Make.com webhook URL here =====
-const MAKE_WEBHOOK_URL = "https://hook.eu2.make.com/REPLACE_WITH_YOUR_WEBHOOK";
+// ===== CONFIG: Make.com webhooks, one per form =====
+const MAKE_WEBHOOKS = {
+  early_access: "https://hook.eu1.make.com/sl8skcmmv0q2ir4lnpuo3cq47ntkiqfp",
+  investor_deck: "https://hook.eu1.make.com/npouelz0bkvj0w2rnep1qw8poo8kwily",
+};
 
 // Forms → Make (fields + form name + page + timestamp)
 document.querySelectorAll("form[data-make]").forEach((form) => {
@@ -15,8 +18,7 @@ document.querySelectorAll("form[data-make]").forEach((form) => {
     data.ref = new URLSearchParams(location.search).get("ref") || "";
     btn.disabled = true;
     try {
-      // form-encoded + no-cors = no preflight; Make parses the fields automatically
-      await fetch(MAKE_WEBHOOK_URL, { method: "POST", mode: "no-cors", body: new URLSearchParams(data) });
+      await fetch(MAKE_WEBHOOKS[form.dataset.make], { method: "POST", mode: "no-cors", body: new URLSearchParams(data) });
       form.reset();
       if (msg) { msg.className = "form-msg"; msg.textContent = form.dataset.success || "You're on the list."; }
     } catch {
